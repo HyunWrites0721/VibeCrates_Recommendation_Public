@@ -1,0 +1,2 @@
+indexes/*.pt filter=lfs diff=lfs merge=lfs -text
+indexes/*.parquet filter=lfs diff=lfs merge=lfs -text
