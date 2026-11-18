@@ -193,8 +193,8 @@ FastAPI 서버입니다. 전체 엔드포인트 목록: `http://<서버>:8000/do
 ### 환경
 
 ```bash
-git clone https://github.com/VibeCrates/VibeCrates_Recommendation.git
-cd VibeCrates_Recommendation
+git clone https://github.com/HyunWrites0721/VibeCrates_Recommendation_Public.git
+cd VibeCrates_Recommendation_Public
 
 python -m venv venv
 source venv/bin/activate
@@ -310,7 +310,7 @@ python scripts/train.py \
 ## 10. 저장소 구조
 
 ```
-VibeCrates_Recommendation/
+VibeCrates_Recommendation_Public/
 ├── src/
 │   ├── api/                 # FastAPI 서버: 라우트, 모델 적재, 번역, 도메인 판별
 │   ├── models/              # 듀얼 인코더 (TextBlock, ImageBlock, QueryBlock, ContentBlock)

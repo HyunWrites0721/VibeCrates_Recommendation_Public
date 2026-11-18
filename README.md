@@ -193,8 +193,8 @@ Vectors are L2-normalized, so the dot product equals cosine similarity. `transla
 ### Environment
 
 ```bash
-git clone https://github.com/VibeCrates/VibeCrates_Recommendation.git
-cd VibeCrates_Recommendation
+git clone https://github.com/HyunWrites0721/VibeCrates_Recommendation_Public.git
+cd VibeCrates_Recommendation_Public
 
 python -m venv venv
 source venv/bin/activate
@@ -310,7 +310,7 @@ Causes and current status are in [`docs/model_issues.md`](docs/model_issues.md).
 ## 10. Repository layout
 
 ```
-VibeCrates_Recommendation/
+VibeCrates_Recommendation_Public/
 ├── src/
 │   ├── api/                 # FastAPI server: routes, model loading, translation, domain detection
 │   ├── models/              # Dual encoder (TextBlock, ImageBlock, QueryBlock, ContentBlock)
