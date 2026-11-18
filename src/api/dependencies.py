@@ -318,7 +318,7 @@ async def initialize_dependencies() -> None:
             if not _manager.load_index(domain):
                 msg = f"인덱스 파일 없음 ({INDEX_DIR}/{domain}_embeddings.pt, _meta.parquet)"
                 _manager.load_errors[domain] = msg
-                logger.warning(f"[{domain}] {msg} — `python scripts/build_index.py` 후 다시 띄우세요.")
+                logger.warning(f"[{domain}] {msg} — `python scripts/train/build_index.py` 후 다시 띄우세요.")
         except Exception as e:
             _manager.load_errors[domain] = f"{type(e).__name__}: {e}"
             _log_failure(f"[{domain}] 인덱스 적재", e, "이 도메인 추천이 503이 됩니다")

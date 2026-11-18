@@ -75,13 +75,13 @@ VibeCrates는 분위기를 텍스트로 입력받아("비 오는 밤에 혼자",
   <tr><td><a href="https://openlibrary.org/developers/api">Open Library API</a></td><td>표지, 카테고리, 평점</td><td>Open Library 이용 약관</td></tr>
 </table>
 
-책 데이터는 세 데이터셋에서 블러브가 있는 행을 합치고 중복을 제거해 만들었습니다(우선순위 Kindle > Goodreads > BX, `scripts/merge_book_sources.py`).
+책 데이터는 세 데이터셋에서 블러브가 있는 행을 합치고 중복을 제거해 만들었습니다(우선순위 Kindle > Goodreads > BX, `scripts/data/merge_book_sources.py`).
 
 TMDB 이용 약관에 따른 고지: This product uses the TMDB API but is not endorsed or certified by TMDB.
 
 모델에 들어가는 작품 텍스트는 LLM이 원본 정보(줄거리, 블러브, 오디오 피처 등)로 합성한 분위기 설명(`description_synth`)입니다. 세 도메인이 같은 형식을 씁니다. 음악의 오디오 피처(energy, valence 등)는 "차분한", "강렬한" 같은 표현으로 바뀌어 설명에 들어갑니다.
 
-작품마다 학습 쿼리가 3개 있습니다. Qwen2.5-VL이 표지와 설명을 보고 만든 짧은 검색어입니다. `scripts/prepare_dataset.py`가 쿼리와 작품을 짝지어 `data/train_dataset.csv`를 만듭니다.
+작품마다 학습 쿼리가 3개 있습니다. Qwen2.5-VL이 표지와 설명을 보고 만든 짧은 검색어입니다. `scripts/train/prepare_dataset.py`가 쿼리와 작품을 짝지어 `data/train_dataset.csv`를 만듭니다.
 
 원본 데이터, canonical CSV, 이미지, 학습 데이터, 모델 파일은 저장소에 없습니다.
 
@@ -242,33 +242,33 @@ pytest tests/        # 도메인 판별, 번역 (52개)
 ### 학습 파이프라인
 
 ```
-canonical CSV
-  → generate_item_descriptions.py / generate_music_descriptions.py   분위기 설명 합성 (vLLM)
-  → generate_queries.py                                             작품별 학습 쿼리 3개 생성 (Qwen2.5-VL)
-  → prepare_dataset.py                                              data/train_dataset.csv
-  → extract_image_embeddings.py                                     표지 이미지 임베딩 계산
-  → train.py                                                        2단계 학습 + 인덱스 생성
-  → convert_bundle_csv.py --require-image                           백엔드 전달용 작품 벡터 번들
-  → export_query_vectors.py                                         백엔드 전달용 학습 쿼리 벡터
+canonical CSV   (scripts/ 기준 경로)
+  → synth/generate_item_descriptions.py, generate_music_descriptions.py   분위기 설명 합성 (vLLM)
+  → synth/generate_queries.py                                             작품별 학습 쿼리 3개 생성 (Qwen2.5-VL)
+  → train/prepare_dataset.py                                              data/train_dataset.csv
+  → train/extract_image_embeddings.py                                     표지 이미지 임베딩 계산
+  → train/train.py                                                        2단계 학습 + 인덱스 생성
+  → export/convert_bundle_csv.py --require-image                          백엔드 전달용 작품 벡터 번들
+  → export/export_query_vectors.py                                        백엔드 전달용 학습 쿼리 벡터
 ```
 
 ```bash
-python scripts/train.py \
+python scripts/train/train.py \
     --data-path data/train_dataset.csv \
-    --image-embeddings <extract_image_embeddings.py가 만든 .pt> \
+    --image-embeddings <scripts/train/extract_image_embeddings.py가 만든 .pt> \
     --sample-one-query \
     --save-path models/trained_model.pt \
     --index-dir indexes
 ```
 
-`--sample-one-query`는 매 스텝 작품의 학습 쿼리 3개 중 하나를 무작위로 씁니다(서비스 모델 설정). 그 밖의 실험용 옵션(`--query-lora`, `--title-dropout`, `--domain-balanced-batches` 등)은 `python scripts/train.py --help`에 있습니다.
+`--sample-one-query`는 매 스텝 작품의 학습 쿼리 3개 중 하나를 무작위로 씁니다(서비스 모델 설정). 그 밖의 실험용 옵션(`--query-lora`, `--title-dropout`, `--domain-balanced-batches` 등)은 `python scripts/train/train.py --help`에 있습니다.
 
 ### 평가
 
 두 모델(체크포인트 + 인덱스)을 같은 평가 검색어로 돌려 비교합니다.
 
-- **쌍대 판정:** `scripts/judge_pairwise.py`가 두 모델의 결과를 LLM 판정기(기본 Qwen2.5-VL-7B)에 나란히 보여 주고 더 나은 쪽을 고르게 합니다. 순서를 바꿔 두 번 묻고, 승률과 p값을 냅니다.
-- **사람 라벨:** `scripts/build_label_sheet.py`로 라벨 시트를 만들고, `scripts/score_label_sheet.py`로 집계합니다.
+- **쌍대 판정:** `scripts/eval/judge_pairwise.py`가 두 모델의 결과를 LLM 판정기(기본 Qwen2.5-VL-7B)에 나란히 보여 주고 더 나은 쪽을 고르게 합니다. 순서를 바꿔 두 번 묻고, 승률과 p값을 냅니다.
+- **사람 라벨:** `scripts/eval/build_label_sheet.py`로 라벨 시트를 만들고, `scripts/eval/score_label_sheet.py`로 집계합니다.
 
 평가 스크립트의 출력은 `experiments/`에 저장됩니다. 저장소에는 부정 표현 측정 결과(`experiments/negation/`)만 포함했습니다.
 
@@ -316,13 +316,21 @@ VibeCrates_Recommendation_Public/
 │   ├── models/              # 듀얼 인코더 (TextBlock, ImageBlock, QueryBlock, ContentBlock)
 │   ├── training/            # 2단계 트레이너, InfoNCE 손실, 학습 기록
 │   └── data/                # 데이터셋, 로더, 전처리
-├── scripts/                 # 데이터 수집·합성, 학습, 인덱스·번들 생성, 평가, 서버 실행
-│   └── vibe_crate/          # 메인·보드 화면 디자인 시안 (정적 HTML)
+├── scripts/
+│   ├── data/                # 작품 데이터 수집·병합·정제
+│   ├── synth/               # LLM 분위기 설명·학습 쿼리 합성, 합성 결과 QA
+│   ├── train/               # 학습 데이터 구성, 이미지 임베딩, 학습, 인덱스 생성
+│   ├── export/              # 백엔드 전달용 작품 벡터·쿼리 벡터 번들
+│   ├── eval/                # LLM 판정기, 사람 라벨 시트, 검색 결과 분석
+│   ├── translation/         # 번역 사전 생성, 문장 번역 비교
+│   ├── serve.sh             # API 서버 실행
+│   ├── check_api.py         # API 접속 점검
+│   └── infer.py             # 검색어 하나로 추천 결과 확인 (CLI)
 ├── data/translation/        # 번역 사전용 한국어 어휘
 ├── experiments/negation/    # 부정 표현 측정 결과
-├── docs/                    # 개발 과정, 설계 문서, API 안내, 실험 보고
+├── docs/                    # 개발 과정
 ├── tests/                   # pytest
-├── Dockerfile, docker/      # 서빙 컨테이너
+├── Dockerfile               # 서빙 컨테이너
 ├── requirements.txt         # 학습·실험 포함 전체 의존성
 └── requirements-serve.txt   # API 서버 전용 의존성
 ```

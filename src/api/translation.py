@@ -26,7 +26,7 @@ direct 0.857 / philosophical 0.783인데 poet만 0.632다.
 2026-10-12 — 사전을 먼저 본다:
   백엔드가 실제로 보내는 검색어는 "시집", "로파이 비 오는 날" 같은 짧은 단어 조합이고,
   opus-mt는 거기서 무너진다. 로그 530종 중 33.0%가 핵심어를 잃었다(시집 → "Indulgent",
-  보사노바 → "Bosanoba"). 그래서 검색어를 사전(ko_en_dict.json, scripts/build_translation_dict.py)
+  보사노바 → "Bosanoba"). 그래서 검색어를 사전(ko_en_dict.json, scripts/translation/build_translation_dict.py)
   의 단어로 끝까지 쪼갤 수 있으면 사전 번역을 이어 붙이고, 하나라도 못 쪼개면 opus-mt로
   넘긴다. 사전은 어휘 단위로만 맞으므로 문장형 검색어는 지금처럼 opus-mt가 옮긴다.
 
@@ -60,7 +60,7 @@ LLM_URL     = os.getenv("LLM_TRANSLATE_URL", "").rstrip("/")
 LLM_MODEL   = os.getenv("LLM_TRANSLATE_MODEL", "gemma3-4b")
 LLM_TIMEOUT = float(os.getenv("LLM_TRANSLATE_TIMEOUT", "1.0"))
 
-# scripts/translate_sentence_bench.py의 PROMPT와 같은 문구 — 10/15 판정이 이 프롬프트로 나왔다.
+# scripts/translation/translate_sentence_bench.py의 PROMPT와 같은 문구 — 10/15 판정이 이 프롬프트로 나왔다.
 LLM_PROMPT = (
     "Translate this Korean search query from a book/movie/music recommendation app into "
     "natural English.\n\n"

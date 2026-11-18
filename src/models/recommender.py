@@ -8,8 +8,6 @@ from sentence_transformers import SentenceTransformer
 from transformers import CLIPImageProcessor, CLIPTokenizer, CLIPVisionModel, CLIPTextModel, CLIPConfig
 from peft import get_peft_model, LoraConfig, TaskType
 
-from .base import BaseRecommender
-
 
 class MLP(nn.Module):
     """A simple MLP block."""
@@ -181,13 +179,12 @@ class ContentBlock(nn.Module):
         return z_content
 
 
-class DualEncoderModel(nn.Module, BaseRecommender):
+class DualEncoderModel(nn.Module):
     """
     The main model that orchestrates all blocks for training and inference.
     """
     def __init__(self, query_lora: bool = False):
-        nn.Module.__init__(self)
-        BaseRecommender.__init__(self, name="DualEncoderModel")
+        super().__init__()
         self.text_block = TextBlock()
         self.image_block = ImageBlock()
         # query_lora=True면 QueryBlock의 CLIP 텍스트 인코더에 LoRA가 붙는다(개선안 1).
@@ -247,15 +244,3 @@ class DualEncoderModel(nn.Module, BaseRecommender):
             "z_image": z_image,
             "z_query": z_query
         }
-
-    def fit(self, X, y=None, **kwargs):
-        """Training logic will be handled by the Trainer class."""
-        raise NotImplementedError("Use the custom Trainer class for training this model.")
-
-    def predict(self, X, top_k=10):
-        """Prediction logic will be handled by an inference script with ANN search."""
-        raise NotImplementedError("Use a dedicated inference script for predictions.")
-
-    def evaluate(self, X_test, y_test=None, **kwargs):
-        """Evaluation logic will be handled by the Trainer or a dedicated script."""
-        raise NotImplementedError("Use the custom Trainer for evaluation.")
