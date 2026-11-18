@@ -2,6 +2,8 @@
 
 **English** · [한국어](README_KR.md)
 
+> **This is a public copy.** It is a curated selection of code and documents from the team's private working repository. Session reports, raw data, human labels and internal server details are left out, and the development record is summarized in [`docs/development_history.md`](docs/development_history.md) (Korean). The commit history does not continue from the original.
+
 VibeCrates takes a mood as text ("alone on a rainy night", "a calm countryside scene", etc.) and recommends matching movies, music and books. Results are shown as a "board", a collage of their covers.
 
 This repository is the AI recommendation server.
@@ -10,6 +12,13 @@ This repository is the AI recommendation server.
 - Evaluation: search-quality experiments
 
 User accounts, saved boards and vector search belong to the backend repository; the UI belongs to the frontend repository.
+
+| Home | Board detail |
+|---|---|
+| <img src="assets/screen_home.jpg" alt="Home: search box and today's recommended boards" /> | <img src="assets/screen_board.jpg" alt="Board detail: a collage of movie, music and book covers" /> |
+| Search box and today's recommended boards | A board of movie, music and book covers. Covers can be moved and rotated, and the board can be captured as an image |
+
+The screenshots are from the frontend prototype running on mock backend data. Solid-color covers are the fallback artwork used when an item has no cover image.
 
 ---
 
