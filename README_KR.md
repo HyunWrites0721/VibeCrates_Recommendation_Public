@@ -150,13 +150,13 @@ TMDB 이용 약관에 따른 고지: This product uses the TMDB API but is not e
 
 번역이 모두 실패하면 원문을 그대로 인코딩합니다.
 
-검색어가 지목한 도메인도 판별합니다(`src/api/domain_intent.py`). "영화", "노래", "소설" 같은 작품 종류 명사가 있으면 `domain`이 `movie`·`music`·`book` 중 하나가 되고, 없거나 여러 도메인이면 `all`입니다. 장르(재즈, 공포)는 단서로 쓰지 않습니다. 세부 규칙은 [`docs/api_for_backend.md`](docs/api_for_backend.md)에 있습니다.
+검색어가 지목한 도메인도 판별합니다(`src/api/domain_intent.py`). "영화", "노래", "소설" 같은 작품 종류 명사가 있으면 `domain`이 `movie`·`music`·`book` 중 하나가 되고, 없거나 여러 도메인이면 `all`입니다. 장르(재즈, 공포)는 단서로 쓰지 않습니다.
 
 ---
 
 ## 5. API
 
-FastAPI 서버입니다. 전체 엔드포인트 목록: `http://<서버>:8000/docs`. 요청·응답 형식, 전달 번들 형식, Qdrant 적재 방법은 [`docs/api_for_backend.md`](docs/api_for_backend.md)에 있습니다.
+FastAPI 서버입니다. 전체 엔드포인트 목록: `http://<서버>:8000/docs`.
 
 | 메서드 · 경로 | 용도 |
 |---|---|
@@ -270,7 +270,7 @@ python scripts/train.py \
 - **쌍대 판정:** `scripts/judge_pairwise.py`가 두 모델의 결과를 LLM 판정기(기본 Qwen2.5-VL-7B)에 나란히 보여 주고 더 나은 쪽을 고르게 합니다. 순서를 바꿔 두 번 묻고, 승률과 p값을 냅니다.
 - **사람 라벨:** `scripts/build_label_sheet.py`로 라벨 시트를 만들고, `scripts/score_label_sheet.py`로 집계합니다.
 
-실험 산출물은 `experiments/`, 실험 보고는 `docs/`에 있습니다.
+평가 스크립트의 출력은 `experiments/`에 저장됩니다. 저장소에는 부정 표현 측정 결과(`experiments/negation/`)만 포함했습니다.
 
 ---
 
@@ -303,7 +303,7 @@ python scripts/train.py \
 - **부정 표현:** "무섭지 않은 판타지 소설"이 "무서운 판타지 소설"과 가까운 벡터가 됩니다. 고정된 CLIP 텍스트 인코더의 한계입니다.
 - **은유적 문장:** 은유적인 검색어는 번역문의 의미가 원문의 의미와 어긋나는 경우가 있습니다.
 
-원인과 현재 상태는 [`docs/model_issues.md`](docs/model_issues.md)에 있습니다.
+측정과 검토 내용은 [`docs/development_history.md`](docs/development_history.md) 2-10에 있습니다.
 
 ---
 
@@ -319,7 +319,7 @@ VibeCrates_Recommendation_Public/
 ├── scripts/                 # 데이터 수집·합성, 학습, 인덱스·번들 생성, 평가, 서버 실행
 │   └── vibe_crate/          # 메인·보드 화면 디자인 시안 (정적 HTML)
 ├── data/translation/        # 번역 사전용 한국어 어휘
-├── experiments/             # 실험 결과
+├── experiments/negation/    # 부정 표현 측정 결과
 ├── docs/                    # 개발 과정, 설계 문서, API 안내, 실험 보고
 ├── tests/                   # pytest
 ├── Dockerfile, docker/      # 서빙 컨테이너
@@ -333,11 +333,8 @@ VibeCrates_Recommendation_Public/
 
 | 문서 | 내용 |
 |---|---|
-| [`docs/api_for_backend.md`](docs/api_for_backend.md) | 백엔드 연동: 엔드포인트, 전달 번들 형식, Qdrant 적재, 도메인 상한 규칙 |
-| [`docs/model_issues.md`](docs/model_issues.md) | 모델 문제 목록 (해결 / 서비스 무관 / 남김 / 미확인) |
 | [`docs/development_history.md`](docs/development_history.md) | 개발 과정: 단계별 흐름, 주요 문제와 해결, 채택하지 않은 시도 |
-| [`docs/design_poet_style_alignment.md`](docs/design_poet_style_alignment.md), [`docs/design_audio_feature_integration.md`](docs/design_audio_feature_integration.md) | 설계 노트 |
-| [`docs/report_judge_validation_20261009.md`](docs/report_judge_validation_20261009.md) | LLM 판정기 검증 결과 |
+| [`experiments/negation/README.md`](experiments/negation/README.md) | 부정 표현 검색어 측정: 번역, 모델 반영 정도 |
 
 ---
 

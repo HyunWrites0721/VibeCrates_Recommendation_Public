@@ -150,13 +150,13 @@ The model is trained in English and the CLIP tokenizer is English-only. Korean q
 
 If all translation fails, the original text is encoded as is.
 
-The server also detects the domain a query names (`src/api/domain_intent.py`). A noun for a kind of work ("movie", "song", "novel") sets `domain` to `movie`, `music` or `book`; otherwise, or when several domains are named, it is `all`. Genres (jazz, horror) are not used as cues. Full rules are in [`docs/api_for_backend.md`](docs/api_for_backend.md).
+The server also detects the domain a query names (`src/api/domain_intent.py`). A noun for a kind of work ("movie", "song", "novel") sets `domain` to `movie`, `music` or `book`; otherwise, or when several domains are named, it is `all`. Genres (jazz, horror) are not used as cues.
 
 ---
 
 ## 5. API
 
-A FastAPI server. All endpoints are listed at `http://<server>:8000/docs` once it is running. Request and response formats, the bundle format and Qdrant loading are documented in [`docs/api_for_backend.md`](docs/api_for_backend.md) (Korean).
+A FastAPI server. All endpoints are listed at `http://<server>:8000/docs` once it is running.
 
 | Method · path | Purpose |
 |---|---|
@@ -270,7 +270,7 @@ Two models (checkpoint + index) are run on the same evaluation queries and compa
 - **Pairwise judging:** `scripts/judge_pairwise.py` shows the two models' results side by side to an LLM judge (Qwen2.5-VL-7B by default), which picks the better one. Each pair is asked twice with the order swapped; the output is a win rate and p-value.
 - **Human labels:** `scripts/build_label_sheet.py` builds a label sheet and `scripts/score_label_sheet.py` tallies it.
 
-Experiment outputs are in `experiments/`; experiment reports are in `docs/`.
+Evaluation scripts write their outputs to `experiments/`. The repository includes only the negation measurement (`experiments/negation/`).
 
 ---
 
@@ -303,7 +303,7 @@ Problems and how they were solved are described in [`docs/development_history.md
 - **Negation:** "fantasy novels that are not scary" maps close to "scary fantasy novels". This comes from the frozen CLIP text encoder.
 - **Metaphorical sentences:** for metaphorical queries, the meaning of the translation sometimes differs from the meaning of the original.
 
-Causes and current status are in [`docs/model_issues.md`](docs/model_issues.md).
+The measurement and review are in section 2-10 of [`docs/development_history.md`](docs/development_history.md) (Korean).
 
 ---
 
@@ -319,7 +319,7 @@ VibeCrates_Recommendation_Public/
 ├── scripts/                 # Data collection/synthesis, training, index/bundle export, evaluation, serving
 │   └── vibe_crate/          # Main and board screen design mockups (static HTML)
 ├── data/translation/        # Korean vocabulary for the translation dictionary
-├── experiments/             # Experiment outputs
+├── experiments/negation/    # Negation measurement
 ├── docs/                    # Development history, design notes, API guide, experiment reports
 ├── tests/                   # pytest
 ├── Dockerfile, docker/      # Serving container
@@ -331,15 +331,12 @@ VibeCrates_Recommendation_Public/
 
 ## 11. Documentation
 
-Most documents are in Korean.
+Both documents are in Korean.
 
 | Document | Contents |
 |---|---|
-| [`docs/api_for_backend.md`](docs/api_for_backend.md) | Backend integration: endpoints, bundle format, Qdrant loading, per-domain cap rule |
-| [`docs/model_issues.md`](docs/model_issues.md) | Model issue list (resolved / not affecting the service / kept / unconfirmed) |
 | [`docs/development_history.md`](docs/development_history.md) | Development history: timeline, main problems and fixes, attempts not adopted |
-| [`docs/design_poet_style_alignment.md`](docs/design_poet_style_alignment.md), [`docs/design_audio_feature_integration.md`](docs/design_audio_feature_integration.md) | Design notes |
-| [`docs/report_judge_validation_20261009.md`](docs/report_judge_validation_20261009.md) | LLM judge validation results |
+| [`experiments/negation/README.md`](experiments/negation/README.md) | Negation query measurement: translation and how much the model reflects negation |
 
 ---
 

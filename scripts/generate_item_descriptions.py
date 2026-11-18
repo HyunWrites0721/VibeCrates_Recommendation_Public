@@ -1,7 +1,7 @@
 """
 영화/책의 "통합 vibe description"을 LLM(Qwen2.5-VL)으로 합성한다.
 
-동기 (음악 텍스트 진단, docs/development_history.md 2-2 + docs/design_poet_style_alignment.md 개선안 3):
+동기 (음악 텍스트 진단, docs/development_history.md 2-2):
   content_text의 텍스트 "타입"을 3도메인이 동일 계약으로 맞춰야 SBERT 공간이 갈라지지
   않는다. 또한 6월 평가에서 poet/추상 쿼리가 전역 실패한 원인 중 하나가 콘텐츠 텍스트에
   mood 어휘가 없다는 것 — movie overview는 줄거리(사실) 위주, book 블러브는 주제/홍보
